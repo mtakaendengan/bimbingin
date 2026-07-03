@@ -4,8 +4,8 @@
  * Isi CONFIG sebelum menjalankan setupBimbingIn().
  */
 const CONFIG = {
-  SPREADSHEET_ID: 'PASTE_SPREADSHEET_ID_HERE',
-  ROOT_FOLDER_ID: 'PASTE_ROOT_DRIVE_FOLDER_ID_HERE',
+  SPREADSHEET_ID: '1HR_ARbuPO3PYo22v9FT4A_27_2PJolBk',
+  ROOT_FOLDER_ID: '1tf4PUNeXTjpe5E7BOZZIjp1p4ViU6R0F',
   CALENDAR_ID: 'primary',
   APP_NAME: 'BimbingIn',
   TIMEZONE: 'Asia/Makassar',

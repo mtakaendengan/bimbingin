@@ -1,139 +1,169 @@
 # BimbingIn
 
-**BimbingIn** adalah website pembimbingan skripsi berbasis **GitHub Pages + Google Apps Script** untuk membantu dosen dan mahasiswa mengelola proses bimbingan dari proposal, seminar hasil, skripsi, artikel ilmiah, sampai arsip setelah lulus.
+**BimbingIn** adalah website pembimbingan skripsi berbasis GitHub Pages dan Google Apps Script untuk proses Proposal, Seminar Hasil, Skripsi, Artikel Ilmiah, dan data pendukung mahasiswa.
 
-GitHub Pages menjalankan frontend statis, sedangkan Google Apps Script menjadi backend/API untuk Google Sheets, Google Drive, dan Google Calendar.
+## Arsitektur
 
-## Fitur utama
+GitHub Pages tidak menjalankan PHP server-side. Karena itu, BimbingIn menggunakan arsitektur berikut:
 
-### Halaman awal
+```text
+GitHub Pages          : HTML, CSS, JavaScript
+Google Apps Script   : Backend/API
+Google Sheets        : Database
+Google Drive         : Penyimpanan file dan template
+Google Calendar      : Jadwal bimbingan dan sidang
+```
+
+Folder `php/` hanya adapter opsional untuk WAMP/cPanel, bukan untuk GitHub Pages.
+
+## Fitur Halaman Awal
 
 - Ringkasan hari ini.
-- Update mahasiswa dan progres.
-- Jadwal bimbingan dan ujian dari Google Calendar.
-- Status ketersediaan dosen.
+- Data update mahasiswa dan progress.
+- Jadwal ujian dan bimbingan dari Google Calendar.
+- Status dosen: Available Online, Offline, Online & Offline, By Appointment, Tidak Tersedia.
 - Daftar mahasiswa bimbingan baru.
-- Template akademik publik tanpa login.
-- Tombol login dan daftar mahasiswa baru.
+- Template Proposal, Seminar Hasil, Skripsi, Artikel Ilmiah, dan Administrasi yang bisa diakses tanpa login.
+- Tombol Login dan Daftar Mahasiswa Baru.
 
-### Mahasiswa
+## Fitur Mahasiswa
 
 - Daftar sebagai mahasiswa bimbingan baru.
-- Login menggunakan username berbasis NIM.
-- Melengkapi profil mahasiswa.
-- Upload file ke folder Proposal, Seminar Hasil, Skripsi, Artikel Ilmiah, Data Pendukung, dan Data Lainnya.
-- Penamaan otomatis file Proposal/Hasil/Skripsi/Artikel.
-- Ajukan file terakhir untuk review.
-- Menerima hasil review dosen.
-- Mengisi catatan perbaikan/klarifikasi.
-- Ajukan jadwal bimbingan.
-- Ajukan jadwal sidang proposal/hasil/skripsi.
-- Menghubungi dosen melalui WhatsApp/email.
-- Mengakses akun dalam mode arsip setelah lulus.
-- Mengakses **Ruang Sharing Akademik** untuk melihat referensi pekerjaan mahasiswa lain yang sudah disetujui dosen.
-- Mengajukan file miliknya sendiri untuk masuk ke Ruang Sharing.
+- Username menggunakan NIM.
+- Setelah diverifikasi dosen, sistem membuat folder Drive utama dengan format:
 
-### Dosen/Admin
+```text
+NIM_NAMA
+```
 
-- Login sebagai dosen/admin.
-- Melihat ringkasan mahasiswa, review, jadwal, dan pengajuan.
-- Mengatur status bimbingan online/offline.
-- Menambah atau memverifikasi mahasiswa.
-- Review dokumen mahasiswa.
-- Upload file review dosen.
+Contoh:
+
+```text
+202201001_ANDI_SETIAWAN
+```
+
+- Subfolder otomatis:
+
+```text
+Proposal
+Seminar Hasil
+Skripsi
+Artikel Ilmiah
+Data Pendukung
+Data Lainnya
+```
+
+- Upload file sesuai folder.
+- Penamaan otomatis:
+
+```text
+Proposal_NIM_yyMMdd-HHmmss.ext
+Hasil_NIM_yyMMdd-HHmmss.ext
+Skripsi_NIM_yyMMdd-HHmmss.ext
+Artikel_NIM_yyMMdd-HHmmss.ext
+DataPendukung_NIM_yyMMdd-HHmmss.ext
+DataLainnya_NIM_yyMMdd-HHmmss.ext
+```
+
+- Folder Proposal, Seminar Hasil, Skripsi, dan Artikel Ilmiah hanya menerima `.doc`, `.docx`, `.ppt`, `.pptx`, `.pdf`.
+- Folder Data Pendukung dan Data Lainnya menerima file pendukung sampai 100 MB per file.
+- Mahasiswa dapat melihat, menambahkan, dan menghapus file sendiri selama belum dikunci/diajukan review.
+- Mahasiswa dapat memilih file terakhir untuk diajukan review.
+- Mahasiswa menerima hasil review dan dapat memberi catatan perbaikan/klarifikasi.
+- Mahasiswa dapat mengajukan review artikel ilmiah.
+- Mahasiswa dapat mengajukan jadwal bimbingan.
+- Mahasiswa dapat mengajukan jadwal sidang Proposal, Seminar Hasil, atau Skripsi.
+- Mahasiswa dapat menghubungi dosen melalui pesan internal, WhatsApp, dan email.
+- Mahasiswa lulus tetap dapat login sebagai arsip.
+
+## Fitur Dosen/Admin
+
+- Dashboard ringkasan mahasiswa, review, dan jadwal.
+- Profil dosen dan status ketersediaan bimbingan.
+- Verifikasi mahasiswa baru.
+- Tambah mahasiswa manual.
+- Manajemen mahasiswa bimbingan.
+- Review dokumen Proposal, Seminar Hasil, Skripsi, dan Artikel Ilmiah.
+- Upload file hasil review dosen.
+- Approval/revisi/tolak/final dokumen.
 - Proses pengajuan bimbingan dan sidang.
+- Pembuatan event Google Calendar setelah disetujui.
 - Upload template akademik publik.
-- Kelola **Ruang Sharing Akademik**.
-- Menyetujui file mahasiswa untuk disalin ke folder `SHARING`.
 - Print report.
 
-## Struktur Google Drive
-
-Saat `setupBimbingIn()` dijalankan, sistem membuat struktur:
+## Struktur Project
 
 ```text
-BimbingIn_ROOT
-├── MAHASISWA
-│   └── NIM_NAMA
-│       ├── Proposal
-│       ├── Seminar Hasil
-│       ├── Skripsi
-│       ├── Artikel Ilmiah
-│       ├── Data Pendukung
-│       └── Data Lainnya
-├── TEMPLATE
-│   ├── Proposal
-│   ├── Seminar Hasil
-│   ├── Skripsi
-│   ├── Artikel Ilmiah
-│   └── Administrasi
-└── SHARING
-    ├── Proposal
-    ├── Seminar Hasil
-    ├── Skripsi
-    ├── Artikel Ilmiah
-    ├── Slide Presentasi
-    └── Referensi Lainnya
+BimbingIn/
+├── index.html
+├── assets/
+│   ├── css/style.css
+│   └── js/
+│       ├── config.js
+│       └── app.js
+├── apps-script/
+│   ├── Code.gs
+│   └── appsscript.json
+├── docs/
+│   ├── DEPLOYMENT.md
+│   └── SHEETS_STRUCTURE.md
+├── sample-data/
+│   ├── Users.csv
+│   ├── Students.csv
+│   ├── Lecturers.csv
+│   └── Templates.csv
+└── php/
+    ├── index.php
+    ├── api.php
+    └── config/users.php
 ```
 
-Folder mahasiswa bersifat private. File yang masuk Ruang Sharing adalah **salinan** di folder `SHARING`, bukan file asli dari folder mahasiswa.
+## Cara Cepat
 
-## Ruang Sharing Akademik
+1. Buat Google Spreadsheet baru.
+2. Buat folder Google Drive utama, misalnya `BimbingIn_ROOT`.
+3. Buka Apps Script.
+4. Salin isi `apps-script/Code.gs`.
+5. Salin manifest dari `apps-script/appsscript.json`.
+6. Isi konfigurasi:
 
-Prinsipnya:
-
-- Semua file mahasiswa private secara default.
-- Mahasiswa lain tidak dapat melihat folder asli mahasiswa.
-- Mahasiswa dapat browse referensi hanya dari file yang sudah disetujui dosen.
-- File yang disetujui disalin ke folder `SHARING`.
-- Data yudisium, data pribadi, catatan review dosen, dan data sensitif tidak boleh dishare.
-- Identitas pemilik file dapat disamarkan atau ditampilkan sesuai keputusan dosen.
-
-Alur:
-
-```text
-Mahasiswa upload file
-↓
-Mahasiswa ajukan review atau ajukan sharing
-↓
-Dosen memeriksa file
-↓
-Dosen setujui sharing
-↓
-Sistem menyalin file ke folder SHARING
-↓
-File tampil pada Ruang Sharing Akademik untuk pengguna login
+```javascript
+SPREADSHEET_ID: 'ID_SPREADSHEET_ANDA'
+ROOT_FOLDER_ID: 'ID_FOLDER_DRIVE_ANDA'
+CALENDAR_ID: 'primary'
 ```
 
-## File penting
+7. Jalankan fungsi:
 
 ```text
-index.html
-assets/css/style.css
+setupBimbingIn
+```
+
+8. Deploy sebagai Web App.
+9. Salin URL Web App ke:
+
+```text
 assets/js/config.js
-assets/js/app.js
-apps-script/Code.gs
-apps-script/appsscript.json
-docs/DEPLOYMENT.md
-docs/SHEETS_STRUCTURE.md
-sample-data/
-php/
 ```
 
-## Akun demo setelah setup
+10. Upload isi folder BimbingIn ke repository GitHub Pages.
+
+## Akun Demo Setelah Setup
 
 ```text
 Dosen
-username: dosen
-password: dosen123
+Username: dosen
+Password: dosen123
 
 Mahasiswa
-username: 202201001
-password: mhs123
+Username: 202201001
+Password: mhs123
 ```
 
-## Catatan penting
+## Catatan Keamanan
 
-GitHub Pages tidak menjalankan PHP server-side. Folder `php/` hanya contoh opsional untuk hosting yang mendukung PHP seperti WAMP/cPanel. Untuk GitHub Pages gunakan `index.html`, `assets/`, dan backend Google Apps Script.
-
-pls work
+- Password disimpan dalam bentuk SHA-256 hash di Google Sheets.
+- Untuk produksi skala besar, disarankan memakai Google OAuth.
+- Jangan menampilkan link Drive mahasiswa di halaman publik.
+- Template publik hanya berasal dari sheet `Templates` dengan status `Aktif`.
+- File yang sudah diajukan review atau disetujui akan dikunci agar tidak dihapus mahasiswa.

@@ -1,0 +1,2 @@
+lecturerId,userId,name,nidn,email,whatsapp,program,department,expertise,guidanceTopics,officeRoom,consultationHours,onlineLink,note,createdAt,updatedAt
+L-DEMO-DOSEN,U-DEMO-DOSEN,Dr. Mahardika Inra Takaendengan,,mahardika@unsrat.ac.id,081244000000,S1 Sistem Informasi,FMIPA/Program Studi,"Sistem Informasi, Rekayasa Perangkat Lunak, Data","Sistem informasi, aplikasi web, data analytics",Ruang Dosen,Senin-Jumat 10.00-14.00,,Silakan ajukan jadwal melalui BimbingIn.,2026-07-03T00:00:00.000Z,2026-07-03T00:00:00.000Z

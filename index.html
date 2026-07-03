@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BimbingIn - Sistem Pembimbingan Skripsi</title>
+  <meta name="description" content="BimbingIn adalah website pembimbingan skripsi terintegrasi Google Sheets, Drive, Calendar, dan Apps Script.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#home"><span class="brand-mark">B</span>BimbingIn</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="#updates">Progress</a></li>
+        <li class="nav-item"><a class="nav-link" href="#calendar">Jadwal</a></li>
+        <li class="nav-item"><a class="nav-link" href="#templates">Template</a></li>
+        <li class="nav-item"><a class="nav-link" href="#sharingInfo">Ruang Sharing</a></li>
+        <li class="nav-item"><a class="nav-link" href="#newStudents">Mahasiswa Baru</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
+      </ul>
+      <div class="d-flex gap-2" id="authButtons">
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">Daftar</button>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+      </div>
+      <div class="d-none align-items-center gap-2" id="userBox">
+        <span class="small text-muted" id="userLabel"></span>
+        <button class="btn btn-outline-danger btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="home">
+  <div class="container py-5">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-7">
+        <span class="badge text-bg-light text-primary mb-3">Proposal • Seminar Hasil • Skripsi • Artikel Ilmiah</span>
+        <h1 class="display-5 fw-bold mb-3">BimbingIn</h1>
+        <p class="lead mb-4">Portal pembimbingan skripsi untuk memantau progres mahasiswa, mengelola file Drive, review dokumen, booking bimbingan, pengajuan sidang, Ruang Sharing Akademik, dan jadwal Google Calendar.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Masuk Dashboard</button>
+          <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">Daftar Mahasiswa Baru</button>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="glass-card p-4">
+          <h5 class="fw-bold mb-3">Ringkasan Hari Ini</h5>
+          <div class="row g-3" id="summaryCards">
+            <div class="col-6"><div class="mini-stat"><span>Mahasiswa Aktif</span><strong id="statActiveStudents">-</strong></div></div>
+            <div class="col-6"><div class="mini-stat"><span>Menunggu Review</span><strong id="statPendingReviews">-</strong></div></div>
+            <div class="col-6"><div class="mini-stat"><span>Bimbingan Hari Ini</span><strong id="statTodayGuidance">-</strong></div></div>
+            <div class="col-6"><div class="mini-stat"><span>Ujian Terjadwal</span><strong id="statExamEvents">-</strong></div></div>
+          </div>
+          <div class="mt-3 p-3 rounded-3 bg-white bg-opacity-75 text-dark">
+            <div class="small text-muted">Status Dosen</div>
+            <div class="fw-semibold" id="lecturerAvailability">Memuat status...</div>
+            <div class="small" id="lecturerAvailabilityNote"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container-fluid px-4 py-4">
+  <section class="mb-5" id="updates">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div><h2 class="h4 fw-bold mb-1">Update Mahasiswa dan Progress</h2><p class="text-muted mb-0">Menampilkan update terbaru dari Google Sheets.</p></div>
+      <div class="d-flex gap-2"><select class="form-select" id="publicStageFilter"><option value="">Semua Tahap</option><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option></select><input class="form-control" id="publicSearch" placeholder="Cari nama/NIM..."></div>
+    </div>
+    <div class="table-responsive card shadow-sm"><table class="table table-hover align-middle mb-0"><thead><tr><th>Mahasiswa</th><th>NIM</th><th>Tahap</th><th>Progress</th><th>Status</th><th>Update</th></tr></thead><tbody id="publicProgressBody"><tr><td colspan="6" class="text-center text-muted py-4">Memuat data...</td></tr></tbody></table></div>
+  </section>
+
+  <section class="mb-5" id="calendar">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="h4 fw-bold mb-1">Tanggal Ujian dan Bimbingan</h2><p class="text-muted mb-0">Diambil dari Google Calendar dosen melalui Apps Script.</p></div><button class="btn btn-outline-secondary btn-sm" id="refreshPublicBtn">Muat Ulang</button></div>
+    <div class="row g-3" id="calendarCards"><div class="col-12 text-muted">Memuat jadwal...</div></div>
+  </section>
+
+  <section class="mb-5" id="templates">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="h4 fw-bold mb-1">Template Akademik</h2><p class="text-muted mb-0">Template aktif dapat diakses tanpa login.</p></div></div>
+    <div class="row g-3" id="templateCards"><div class="col-12 text-muted">Memuat template...</div></div>
+  </section>
+
+  <section class="mb-5" id="sharingInfo">
+    <div class="card shadow-sm border-0 sharing-public-card"><div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3"><div><span class="badge text-bg-primary mb-2">Ruang Sharing Akademik</span><h2 class="h4 fw-bold mb-1">Browse pekerjaan mahasiswa lain sebagai referensi</h2><p class="text-muted mb-0">File mahasiswa tetap private secara default. Hanya file final/approved yang disetujui dosen yang tampil di ruang sharing setelah login.</p></div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Login untuk Akses Sharing</button></div></div>
+  </section>
+
+  <section class="mb-5" id="newStudents">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="h4 fw-bold mb-1">Mahasiswa Bimbingan Baru</h2><p class="text-muted mb-0">Daftar mahasiswa baru yang mendaftar atau baru diterima.</p></div></div>
+    <div class="row g-3" id="newStudentCards"><div class="col-12 text-muted">Memuat data mahasiswa baru...</div></div>
+  </section>
+
+  <section class="mb-5 d-none" id="dashboard">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><div><h2 class="h4 fw-bold mb-1" id="dashboardTitle">Dashboard</h2><p class="text-muted mb-0" id="dashboardSubtitle">Fitur menyesuaikan role pengguna.</p></div><button class="btn btn-outline-secondary" id="printReportBtn">Print Report</button></div>
+    <div class="card shadow-sm mb-3"><div class="card-body"><div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><div><span class="badge text-bg-info mb-2" id="profileRoleBadge">Profil</span><h5 class="mb-1" id="profileName">-</h5><p class="text-muted mb-0" id="profileMeta">-</p></div><div class="small text-end" id="profileFolder"></div></div><div id="profileFormArea"></div></div></div>
+
+    <div id="studentDashboard" class="d-none">
+      <div class="row g-3 mb-3" id="studentSummaryCards"></div>
+      <div class="row g-3 mb-3">
+        <div class="col-xl-7"><div class="card shadow-sm h-100"><div class="card-body"><h5>Manajemen File Saya</h5><form id="uploadForm" class="row g-2 mb-3"><div class="col-md-4"><select class="form-select" name="folderType" required><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option><option>Data Pendukung</option><option>Data Lainnya</option></select></div><div class="col-md-5"><input class="form-control" type="file" name="file" required></div><div class="col-md-3 d-grid"><button class="btn btn-primary" type="submit">Unggah</button></div><div class="col-12"><textarea class="form-control" name="note" rows="2" placeholder="Catatan file atau revisi..."></textarea></div></form><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Folder</th><th>File</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="studentFilesBody"></tbody></table></div></div></div></div>
+        <div class="col-xl-5"><div class="card shadow-sm h-100"><div class="card-body"><h5>Ajukan Review</h5><form id="submitReviewForm"><label class="form-label">Pilih File</label><select class="form-select mb-2" name="fileId" id="submitReviewFileSelect" required></select><label class="form-label">Catatan Perbaikan/Klarifikasi</label><textarea class="form-control mb-2" name="studentNote" rows="4" placeholder="Jelaskan bagian yang sudah diperbaiki atau hal yang ingin dikonfirmasi."></textarea><button class="btn btn-primary" type="submit">Ajukan Review</button></form><hr><h6>Hasil Review Terbaru</h6><div id="studentReviewsBox" class="notes-box">Belum ada review.</div></div></div></div>
+      </div>
+      <div class="row g-3"><div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Ajukan Bimbingan</h5><form id="guidanceForm" class="row g-2"><div class="col-md-6"><input class="form-control" type="datetime-local" name="preferredStart" required></div><div class="col-md-6"><select class="form-select" name="mode"><option>Online</option><option>Offline</option></select></div><div class="col-12"><input class="form-control" name="topic" placeholder="Topik bimbingan" required></div><div class="col-12"><button class="btn btn-primary" type="submit">Ajukan Bimbingan</button></div></form></div></div></div><div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Ajukan Sidang</h5><form id="examForm" class="row g-2"><div class="col-md-6"><select class="form-select" name="examType"><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option></select></div><div class="col-md-6"><input class="form-control" type="datetime-local" name="preferredDateTime" required></div><div class="col-12"><textarea class="form-control" name="note" rows="2" placeholder="Catatan kelengkapan sidang..."></textarea></div><div class="col-12"><button class="btn btn-primary" type="submit">Ajukan Sidang</button></div></form></div></div></div></div>
+      <div class="card shadow-sm mt-3"><div class="card-body"><h5>Kontak Dosen</h5><div id="studentContactBox" class="d-flex flex-wrap gap-2"></div></div></div>
+      <div class="card shadow-sm mt-3" id="sharingStudentPanel"><div class="card-body"><div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><div><h5 class="mb-1">Ruang Sharing Akademik</h5><p class="text-muted mb-0 small">Browse file referensi mahasiswa lain yang sudah disetujui dosen.</p></div><button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shareRequestModal">Ajukan File Saya ke Sharing</button></div><div class="row g-2 mb-3"><div class="col-md-4"><select class="form-select" id="sharedCategoryFilter"><option value="">Semua Kategori</option><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option><option>Slide Presentasi</option><option>Referensi Lainnya</option></select></div><div class="col-md-8"><input class="form-control" id="sharedSearch" placeholder="Cari judul, topik, tahun..."></div></div><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Judul</th><th>Kategori</th><th>Topik</th><th>Pemilik</th><th>Aksi</th></tr></thead><tbody id="sharedReferencesBody"></tbody></table></div></div></div>
+    </div>
+
+    <div id="lecturerDashboard" class="d-none">
+      <div class="row g-3 mb-3" id="lecturerStats"></div>
+      <div class="row g-3 mb-3"><div class="col-xl-8"><div class="card shadow-sm h-100"><div class="card-body"><div class="d-flex justify-content-between mb-2"><h5>Mahasiswa Bimbingan</h5><button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">Tambah Manual</button></div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Mahasiswa</th><th>Tahap</th><th>Status</th><th>Review</th><th>Aksi</th></tr></thead><tbody id="lecturerStudentsBody"></tbody></table></div></div></div></div><div class="col-xl-4"><div class="card shadow-sm h-100"><div class="card-body"><h5>Status Dosen</h5><form id="lecturerStatusForm"><select class="form-select mb-2" name="availabilityStatus"><option>Available Online</option><option>Available Offline</option><option>Available Online & Offline</option><option>By Appointment</option><option>Tidak Tersedia</option></select><input class="form-control mb-2" name="consultationHours" placeholder="Jam konsultasi"><input class="form-control mb-2" name="offlineLocation" placeholder="Lokasi offline"><input class="form-control mb-2" name="onlineLink" placeholder="Link online"><textarea class="form-control mb-2" name="note" rows="3" placeholder="Catatan status"></textarea><button class="btn btn-primary btn-sm" type="submit">Simpan Status</button></form></div></div></div></div>
+      <div class="row g-3 mb-3"><div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Review Menunggu</h5><div id="pendingReviewsList"></div></div></div></div><div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Pengajuan Jadwal</h5><div id="pendingSchedulesList"></div></div></div></div></div>
+      <div class="card shadow-sm mb-3"><div class="card-body"><h5>Upload Template Publik</h5><form id="templateForm" class="row g-2"><div class="col-md-3"><select class="form-select" name="category"><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option><option>Administrasi</option></select></div><div class="col-md-3"><input class="form-control" name="title" placeholder="Judul template" required></div><div class="col-md-3"><input class="form-control" type="file" name="file" required></div><div class="col-md-3 d-grid"><button class="btn btn-primary" type="submit">Upload Template</button></div><div class="col-12"><textarea class="form-control" name="description" rows="2" placeholder="Deskripsi singkat"></textarea></div></form></div></div>
+      <div class="card shadow-sm"><div class="card-body"><h5>Kelola Ruang Sharing Akademik</h5><p class="small text-muted">Setujui file mahasiswa yang boleh menjadi referensi bersama.</p><div class="row g-3"><div class="col-lg-6"><h6>Permintaan Sharing</h6><div id="shareRequestsList"></div></div><div class="col-lg-6"><h6>Referensi Aktif</h6><div id="lecturerSharedList"></div></div></div></div></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal fade" id="loginModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Login BimbingIn</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="loginForm"><div class="modal-body"><div class="alert alert-info small">Akun demo setelah setup: <b>dosen/dosen123</b> atau <b>202201001/mhs123</b>.</div><label class="form-label">Username</label><input class="form-control mb-2" name="username" required><label class="form-label">Password</label><input class="form-control" name="password" type="password" required></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Masuk</button></div></form></div></div></div>
+<div class="modal fade" id="registerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Daftar Mahasiswa Bimbingan Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="registerForm"><div class="modal-body"><div class="row g-2"><div class="col-md-6"><label class="form-label">Nama Lengkap</label><input class="form-control" name="name" required></div><div class="col-md-6"><label class="form-label">NIM</label><input class="form-control" name="nim" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" type="email" name="email" required></div><div class="col-md-6"><label class="form-label">WhatsApp</label><input class="form-control" name="whatsapp" placeholder="08xxxxxxxxxx"></div><div class="col-md-6"><label class="form-label">Program Studi</label><input class="form-control" name="program" value="S1 Sistem Informasi"></div><div class="col-md-6"><label class="form-label">Angkatan</label><input class="form-control" name="cohort" placeholder="2022"></div><div class="col-12"><label class="form-label">Judul Sementara</label><input class="form-control" name="thesisTitle"></div><div class="col-12"><label class="form-label">Topik/Bidang Penelitian</label><input class="form-control" name="researchTopic"></div><div class="col-md-6"><label class="form-label">Password Awal</label><input class="form-control" type="password" name="password" required></div><div class="col-md-6"><label class="form-label">Konfirmasi Password</label><input class="form-control" type="password" name="confirmPassword" required></div></div><div class="small text-muted mt-3">Username akan menggunakan NIM. Setelah diverifikasi dosen, folder Drive dibuat otomatis dengan format NIM_NAMA beserta subfolder wajib.</div></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Kirim Pendaftaran</button></div></form></div></div></div>
+<div class="modal fade" id="addStudentModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Tambah Mahasiswa Manual</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="addStudentForm"><div class="modal-body"><div class="row g-2"><div class="col-md-6"><input class="form-control" name="name" placeholder="Nama mahasiswa" required></div><div class="col-md-6"><input class="form-control" name="nim" placeholder="NIM" required></div><div class="col-md-6"><input class="form-control" type="email" name="email" placeholder="Email" required></div><div class="col-md-6"><input class="form-control" name="whatsapp" placeholder="WhatsApp"></div><div class="col-md-6"><input class="form-control" name="program" value="S1 Sistem Informasi"></div><div class="col-md-6"><input class="form-control" name="password" placeholder="Password awal" value="mhs123"></div><div class="col-12"><input class="form-control" name="thesisTitle" placeholder="Judul/topik awal"></div></div></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Buat Akun dan Folder</button></div></form></div></div></div>
+<div class="modal fade" id="reviewModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Review Submission</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="reviewForm"><div class="modal-body"><input type="hidden" name="submissionId"><div id="reviewSubmissionInfo" class="mb-3"></div><label class="form-label">Status Review</label><select class="form-select mb-2" name="status"><option>Revisi Minor</option><option>Revisi Mayor</option><option>Disetujui</option><option>Ditolak</option><option>Final</option></select><label class="form-label">Catatan Review</label><textarea class="form-control mb-2" name="lecturerReview" rows="5" required></textarea><label class="form-label">File Review Dosen (opsional)</label><input class="form-control" type="file" name="reviewFile"></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Simpan Review</button></div></form></div></div></div>
+<div class="modal fade" id="shareRequestModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajukan File ke Ruang Sharing</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="shareRequestForm"><div class="modal-body"><div class="alert alert-warning small">Hanya ajukan file yang sudah final, aman dibagikan, dan tidak memuat data pribadi/sensitif.</div><label class="form-label">Pilih File Saya</label><select class="form-select mb-2" name="fileId" id="studentShareFileSelect" required></select><div class="row g-2"><div class="col-md-6"><label class="form-label">Judul Publik</label><input class="form-control" name="title" required></div><div class="col-md-6"><label class="form-label">Kategori</label><select class="form-select" name="category"><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option><option>Slide Presentasi</option><option>Referensi Lainnya</option></select></div><div class="col-md-6"><label class="form-label">Topik</label><input class="form-control" name="topic"></div><div class="col-md-6"><label class="form-label">Tahun</label><input class="form-control" name="year"></div><div class="col-md-6"><label class="form-label">Tampilkan Pemilik</label><select class="form-select" name="ownerDisplayMode"><option value="Anonymous">Samarkan identitas</option><option value="ShowName">Tampilkan nama</option></select></div><div class="col-12"><label class="form-label">Deskripsi</label><textarea class="form-control" name="description" rows="3"></textarea></div></div></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Ajukan ke Dosen</button></div></form></div></div></div>
+<div class="modal fade" id="approveShareModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Setujui Ruang Sharing</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="approveShareForm"><div class="modal-body"><input type="hidden" name="fileId"><div id="approveShareInfo" class="mb-3"></div><div class="row g-2"><div class="col-md-6"><label class="form-label">Judul Publik</label><input class="form-control" name="title" required></div><div class="col-md-6"><label class="form-label">Kategori</label><select class="form-select" name="category"><option>Proposal</option><option>Seminar Hasil</option><option>Skripsi</option><option>Artikel Ilmiah</option><option>Slide Presentasi</option><option>Referensi Lainnya</option></select></div><div class="col-md-6"><label class="form-label">Topik</label><input class="form-control" name="topic"></div><div class="col-md-6"><label class="form-label">Tahun</label><input class="form-control" name="year"></div><div class="col-md-6"><label class="form-label">Identitas Pemilik</label><select class="form-select" name="ownerDisplayMode"><option value="Anonymous">Samarkan identitas</option><option value="ShowName">Tampilkan nama</option></select></div><div class="col-md-6"><label class="form-label">Visibility</label><select class="form-select" name="visibility"><option>LoginOnly</option><option>Public</option></select></div><div class="col-12"><label class="form-label">Deskripsi</label><textarea class="form-control" name="description" rows="3"></textarea></div></div></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Setujui dan Salin ke Folder SHARING</button></div></form></div></div></div>
+<div class="modal fade" id="studentDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="studentDetailTitle">Detail Mahasiswa</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="studentDetailBody"></div></div></div></div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="appToast" class="toast"><div class="toast-header"><strong class="me-auto">BimbingIn</strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

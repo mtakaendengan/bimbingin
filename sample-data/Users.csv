@@ -1,0 +1,3 @@
+userId,username,passwordHash,role,isAdmin,linkedId,name,email,status,mustChangePassword,createdAt,updatedAt
+U-DEMO-DOSEN,dosen,generated_by_setup,dosen,TRUE,L-DEMO-DOSEN,Dr. Mahardika Inra Takaendengan,mahardika@unsrat.ac.id,aktif,FALSE,2026-07-03T00:00:00.000Z,2026-07-03T00:00:00.000Z
+U-DEMO-MHS,202201001,generated_by_setup,mahasiswa,FALSE,S-DEMO-MHS,Andi Setiawan,andi@example.com,aktif,TRUE,2026-07-03T00:00:00.000Z,2026-07-03T00:00:00.000Z

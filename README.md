@@ -135,3 +135,5 @@ password: mhs123
 ## Catatan penting
 
 GitHub Pages tidak menjalankan PHP server-side. Folder `php/` hanya contoh opsional untuk hosting yang mendukung PHP seperti WAMP/cPanel. Untuk GitHub Pages gunakan `index.html`, `assets/`, dan backend Google Apps Script.
+
+pls work
